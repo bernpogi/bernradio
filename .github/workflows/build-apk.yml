@@ -1,0 +1,77 @@
+# BERN – Off-Grid Radio · Automatic test build
+#
+# On every push to main, GitHub:
+#   1. fills in the standard Flutter files that are not in the repo yet,
+#   2. downloads the bundled fonts,
+#   3. checks the code (flutter analyze),
+#   4. builds an installable APK.
+#
+# Download the APK: GitHub repo → Actions tab → latest run → "Artifacts" section.
+# Install it on an Android 7.0+ phone (allow "Install unknown apps" first).
+
+name: Build test APK
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # lets you start a build manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate standard Flutter files (keeps files already in the repo)
+        run: |
+          flutter create --org com.theprojectnoah --project-name bern_offgrid_radio --platforms android .
+          # Remove the sample test from the template unless we've committed our own.
+          git ls-files --error-unmatch test/widget_test.dart >/dev/null 2>&1 || rm -f test/widget_test.dart
+
+      - name: Download bundled fonts (free, OFL license)
+        run: |
+          mkdir -p assets/fonts assets/map
+          cd assets/fonts
+          get() { [ -f "$2" ] || curl -fsSL "$1" -o "$2"; }
+          GF=https://raw.githubusercontent.com/google/fonts/main/ofl
+          PLEX=https://raw.githubusercontent.com/IBM/plex/master/packages/plex-sans/fonts/complete/ttf
+          get $GF/barlowcondensed/BarlowCondensed-SemiBold.ttf BarlowCondensed-SemiBold.ttf
+          get $GF/barlowcondensed/BarlowCondensed-Bold.ttf     BarlowCondensed-Bold.ttf
+          get $PLEX/IBMPlexSans-Regular.ttf                    IBMPlexSans-Regular.ttf
+          get $PLEX/IBMPlexSans-Medium.ttf                     IBMPlexSans-Medium.ttf
+          get $PLEX/IBMPlexSans-SemiBold.ttf                   IBMPlexSans-SemiBold.ttf
+          get $GF/ibmplexmono/IBMPlexMono-Medium.ttf           IBMPlexMono-Medium.ttf
+          ls -la
+
+      - name: Install packages
+        run: flutter pub get
+
+      - name: Check the code
+        # Fails only on real errors; style hints and warnings are reported but don't block the APK.
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: bern-radio-apk-build-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
