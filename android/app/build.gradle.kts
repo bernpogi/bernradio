@@ -1,4 +1,5 @@
 // BERN – Off-Grid Radio · Android app build config
+// (Follows the current Flutter template: AGP 9, built-in Kotlin, Java 17.)
 //
 // Compatibility:
 //   minSdk 24  = Android 7.0 Nougat — the oldest version current Flutter supports.
@@ -8,8 +9,7 @@
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin plugins.
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -19,12 +19,8 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     defaultConfig {
@@ -42,8 +38,7 @@ android {
     buildTypes {
         release {
             // TODO before Play Store release: create an upload keystore and a
-            // signingConfigs { create("release") { ... } } block that reads
-            // android/key.properties (already git-ignored).
+            // release signing config that reads android/key.properties (git-ignored).
             signingConfig = signingConfigs.getByName("debug")
 
             // Shrink the APK — helps on older phones with little storage.
@@ -54,6 +49,12 @@ android {
                 "proguard-rules.pro",
             )
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
