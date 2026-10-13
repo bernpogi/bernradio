@@ -1,0 +1,70 @@
+name: bern_offgrid_radio
+description: "BERN – Off-Grid Radio. Talk, text and send SOS over a LoRa mesh when there is no cell signal."
+publish_to: "none"
+
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+# Package versions are left open on purpose. After `flutter pub get`, run
+# `flutter pub outdated` and pin the resolved versions before your first release.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider:
+
+  # Bluetooth Low Energy link to the LoRa radio (supports Android 7.0+)
+  flutter_blue_plus:
+
+  # Runtime permissions + Android version checks
+  # (Bluetooth and location permissions work differently on Android 7–11 vs 12+)
+  permission_handler:
+  device_info_plus:
+
+  # Offline map (OpenStreetMap tiles stored on the phone)
+  flutter_map:
+  latlong2:
+
+  # QR code scanning for joining a channel
+  mobile_scanner:
+
+  # Local storage for messages, nodes and settings
+  shared_preferences:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints:
+
+flutter:
+  uses-material-design: true
+
+  # Fonts are bundled inside the app instead of downloaded at runtime,
+  # because the app must work with no internet at all.
+  # Download the .ttf files from fonts.google.com (all are free, OFL license)
+  # and place them in assets/fonts/.
+  fonts:
+    - family: BarlowCondensed
+      fonts:
+        - asset: assets/fonts/BarlowCondensed-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/BarlowCondensed-Bold.ttf
+          weight: 700
+    - family: IBMPlexSans
+      fonts:
+        - asset: assets/fonts/IBMPlexSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/IBMPlexSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
+          weight: 600
+    - family: IBMPlexMono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
+          weight: 500
+
+  assets:
+    - assets/map/
