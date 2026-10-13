@@ -15,7 +15,10 @@ plugins {
 
 android {
     namespace = "com.theprojectnoah.bern_offgrid_radio"
-    compileSdk = flutter.compileSdkVersion
+    // 37 is required by permission_handler 13+ (see its changelog). compileSdk only
+    // controls which APIs the code can reference; it does not affect which phones
+    // can install the app (that is minSdk below).
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
