@@ -5,7 +5,9 @@ publish_to: "none"
 version: 0.1.0+1
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  # Dart toolchain version (developer side only — does not affect which
+  # Android phones are supported; that is minSdk in build.gradle.kts).
+  sdk: ">=3.10.0 <4.0.0"
 
 # Package versions are left open on purpose. After `flutter pub get`, run
 # `flutter pub outdated` and pin the resolved versions before your first release.
