@@ -78,7 +78,18 @@ jobs:
           exit $status
 
       - name: Build APK
-        run: flutter build apk --release
+        run: |
+          set +e
+          flutter build apk --release > build.txt 2>&1
+          status=$?
+          cat build.txt
+          if [ $status -ne 0 ]; then
+            # Post the Gradle error summary as one annotation on the run page.
+            msg=$( { grep -E "^e: |ERROR:|error:" build.txt | head -15; grep -A25 "What went wrong" build.txt; } | head -40 )
+            msg=${msg//'%'/'%25'}; msg=${msg//$'\n'/'%0A'}; msg=${msg//$'\r'/'%0D'}
+            echo "::error title=APK build failed::${msg}"
+          fi
+          exit $status
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
