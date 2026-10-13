@@ -33,6 +33,18 @@ node forwards messages to normal phones once it has signal.
 6. After the first successful `pub get`, run `flutter pub outdated` and pin the
    package versions in `pubspec.yaml` (they are currently left open).
 
+## Getting a test APK without a terminal
+
+Every push to `main` is built automatically by GitHub Actions
+(`.github/workflows/build-apk.yml`): it generates the standard Flutter files,
+downloads the fonts, runs `flutter analyze` and builds a release APK.
+
+1. Open the repo on GitHub → **Actions** tab → newest **Build test APK** run.
+2. Scroll to **Artifacts** and download `bern-radio-apk-build-N` (a zip with the APK).
+3. Copy the APK to an Android 7.0+ phone, allow "Install unknown apps", install.
+
+If a build fails, the problem is posted as an annotation at the top of the run page.
+
 ## Android version compatibility
 
 | Android | API | What the app does |
@@ -51,6 +63,11 @@ node forwards messages to normal phones once it has signal.
 | 2 | `android/app/src/main/AndroidManifest.xml` | Permissions per Android version |
 | 3 | `android/app/build.gradle.kts` (+ `proguard-rules.pro`) | minSdk 24, latest targetSdk, shrunk release builds |
 | 4 | `lib/services/permissions_service.dart` | Version-aware permission requests |
+| – | `.github/workflows/build-apk.yml` | Automatic check + APK build on every push |
+
+Build notes: follows the current Flutter template (AGP 9, Java 17, built-in Kotlin),
+Dart SDK ≥ 3.10, and `compileSdk = 37` because `permission_handler` 13+ requires it.
+None of these change device support; `minSdk = 24` (Android 7.0) does.
 
 ### Next: front-end
 5. `lib/theme/app_theme.dart`: orange theme and fonts from the design
